@@ -1,0 +1,8 @@
+V2012.0, 2012-08-19 -- Initial release.
+V2012.1, 2012-08-22 -- Bugs in Teilnahmenerfassung (Assistent und Stundenweise Bearbeitung) beseitigt
+V2012.2, 2012-08-26 -- Bug in Sitzplanerstellung beseitigt, Hilfe aktualisiert, Hilfelinks hinzugefügt
+V2012.3, 2012-09-23 -- Teilnahmenbearbeitung im Sitzplan hinzugefügt, einige Eingabefelder vergrößert, csv-Export optimiert, mehrere Bugs beim Löschen behoben
+(201)3.0 2013-08-14 -- Ausomatische Kurserstellung mit csv-Dateien und automatischer Bildeinfügung, diverse kleinere Verbesserungen und zahlreiche Bugfixes, neue Versionsbezeichnung
+3.1 2013-09-01 -- Kritischer Bugfix: Umlaute in Notizen; csv-Import: Übernahme vorhandener Schüler; dummy-Bild falls keins verfügbar; weitere Bugfixes
+3.2 2014-03-25 -- Exportfunktionen für Schülerbilder und Kurslisten hinzugefügt; Namen-lernen mit Sitzplan; config-Datei eingeführt und in GUI vorbereitet, Verbesserte Leistungsübersicht mit Leistungszusammenfassung
+3.3 2014-03-30 -- deb-Paket; kleinere technische Änderungen, keine inhaltlichen Änderungen

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=GradeMan
+Version=3.3.0
+Comment=Noten- und Unterrichtsmanager
+GenericName=GradeMan
+Terminal=false
+Icon=GradeManIcon.png
+Type=Application
+Exec=/usr/bin/grademan
+Categories=Education;
