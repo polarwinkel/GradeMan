@@ -27,11 +27,12 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 import os, sys
 os.chdir('/usr/share/grademan')
 sys.path.append('/usr/share/grademan')
+#sys.path.append('grademan')
 import webbrowser, shutil
 from tkinter import *
-from tkinter import ttk
+from tkinter.ttk import *
 from GmHandler import GmHandler
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 # Für cxfreeze:
 from encodings import aliases

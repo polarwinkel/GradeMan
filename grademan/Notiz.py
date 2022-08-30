@@ -28,4 +28,4 @@ class Notiz(object):
         self.notiz = ''
     
     def __str__(self):
-        return self.notiz.decode('utf-8') # TODO: .decode... war ein bugfix, kann wieder raus
+        return self.notiz # .decode('utf-8') # TODO: .decode... war ein bugfix, kann wieder raus

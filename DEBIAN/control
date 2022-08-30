@@ -3,7 +3,7 @@ Version: 3.3.1
 Architecture: all
 Maintainer: Dirk Winkel <it@polarwinkel.de>
 Installed-Size: 425
-Depends: python3 (>= 3.0.0), python3-tk (>= 3.0.0)
+Depends: python3 (>= 3.0.0), python3-tk (>= 3.0.0), python3-bottle (>= 0.12.21)
 Section: utils
 Priority: optional
 Homepage: http://grademan.polarwinkel.de

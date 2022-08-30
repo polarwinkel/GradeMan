@@ -26,7 +26,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 
 import os, webbrowser
 from tkinter import *
-from tkinter import ttk
+from tkinter.ttk import *
 from GmHandler import GmHandler
 from configparser import ConfigParser
 import markdown
