@@ -5,7 +5,7 @@
 
 '''
 GradeMan
-Copyright 2011-2014 Dirk & Jannik Winkel
+Copyright 2011-2022 Dirk & Jannik Winkel, Martin Lorenz
 
     This file is part of GradeMan.
 
@@ -25,8 +25,8 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 '''
 
 import os, webbrowser
-from Tkinter import *
-from ttk import *
+from tkinter import *
+from tkinter.ttk import *
 from GmHandler import GmHandler
 from ConfigParser import ConfigParser
 

@@ -1,9 +1,9 @@
 Package: grademan
-Version: 3.3.1
+Version: 4.0.0
 Architecture: all
 Maintainer: Dirk Winkel <it@polarwinkel.de>
 Installed-Size: 425
-Depends: python (>= 2.7.0), python-tk (>= 2.7.5)
+Depends: python3 (>= 3.0.0), python3-tk (>= 3.0.0), python3-bottle (>= 0.12.21)
 Section: utils
 Priority: optional
 Homepage: http://grademan.polarwinkel.de

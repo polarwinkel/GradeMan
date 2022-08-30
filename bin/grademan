@@ -5,7 +5,7 @@
 
 '''
 GradeMan
-Copyright 2011-2014 Dirk & Jannik Winkel
+Copyright 2011-2022 Dirk & Jannik Winkel, Martin Lorenz
 
     This file is part of GradeMan.
 
@@ -27,11 +27,12 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 import os, sys
 os.chdir('/usr/share/grademan')
 sys.path.append('/usr/share/grademan')
+#sys.path.append('grademan')
 import webbrowser, shutil
-from Tkinter import *
-from ttk import *
+from tkinter import *
+from tkinter.ttk import *
 from GmHandler import GmHandler
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 # Für cxfreeze:
 from encodings import aliases
