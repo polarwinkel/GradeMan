@@ -21,7 +21,7 @@ cd build/
 rm grademan_$version/usr/share/grademan/*.pyc
 
 # Dateirechte setzen:
-chown -R dirk:dirk grademan_$version/
+chown -R mlo:mlo grademan_$version/
 chmod -R =0755 grademan_$version/
 chmod -R =0644 grademan_$version/DEBIAN/*
 chmod -R =0644 grademan_$version/usr/share/pixmaps/*

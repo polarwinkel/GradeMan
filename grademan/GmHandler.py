@@ -25,6 +25,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 import thread
 from bottle import route
 from GmServer import GmServer
+import markdown
 
 class GmHandler():
     '''Handler für GradeMan-Bottle-Server'''
@@ -86,6 +87,7 @@ class GmHandler():
         
         # Weitere
         route('/kursschueler/:kurs/:schueler')(server.kursschueler)
+        route('/kursschueler/change', method = 'POST')(server.kursschuelerchange)
         route('/lernnamen/:kurs')(server.lernnamen)
         route('/lernnamen/:kurs/:sch')(server.lernn)
         route('/csv/:datentyp')(server.csv)

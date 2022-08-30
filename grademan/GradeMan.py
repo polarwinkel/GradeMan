@@ -29,6 +29,7 @@ from Tkinter import *
 from ttk import *
 from GmHandler import GmHandler
 from ConfigParser import ConfigParser
+import markdown
 
 # Für cxfreeze:
 from encodings import aliases

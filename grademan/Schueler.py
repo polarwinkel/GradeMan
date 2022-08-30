@@ -55,7 +55,50 @@ class Schueler(object):
 
     def __str__(self):
         return str(self.num)
-    
+
+    def schriftl(self, teilnahmen, hjwechsel, kurs):
+        '''Ermittelt die Gesamt(durchschnitts)leistungen der Stunden'''
+        '''mit Faktor 0 in einem Kurs'''
+        '''Rückgabe: [hj1, hj2, end]'''
+        hj1 = hj2 = end = 0
+        hj1anz = hj2anz = 0
+        for teil in teilnahmen:
+            #print str(teil.schueler==self)+" "+str(teil.stunde.kurs==kurs)+" "+" "+str(teil.deleted==False)+" "+str(int(teil.stunde.faktor)==0)
+            if (teil.schueler == self) and (teil.stunde.kurs == kurs) and (teil.deleted == False) and (teil.stunde.faktor == '0'):
+                if (teil.fachlich != '-'):
+                    if teil.stunde.datum < hjwechsel:
+                        hj1 += int(teil.fachlich)
+                        if (teil.mitarbeit != '-' and not teil.stunde.kurs.oberstufe):
+                            if (int(teil.mitarbeit) > int(teil.fachlich)):
+                                hj1 += 0.3
+                            elif (int(teil.mitarbeit) < int(teil.fachlich)):
+                                hj1 -= 0.3
+                        hj1anz += 1
+                    else:
+                        hj2 += int(teil.fachlich)
+                        if (teil.mitarbeit != '-' and not teil.stunde.kurs.oberstufe):
+                            if (teil.mitarbeit > teil.fachlich):
+                                hj2+=0.3
+                            elif (teil.mitarbeit < teil.fachlich):
+                                hj2-=0.3
+                        hj2anz += 1
+                    #print str(hj1)+"/"+str(hj1anz)+"="+str(hj1/hj1anz if hj1anz>0 else 1)
+        try:
+            hj1schnitt = round(float(hj1) / hj1anz, 1)
+        except:
+            hj1schnitt = '-'
+        try:
+            hj2schnitt = round(float(hj2) / hj2anz, 1)
+        except:
+            hj2schnitt = '-'
+        try:
+            end = (hj1schnitt+hj2schnitt)/2
+        except:
+            end = '-'
+        schriftl = [hj1schnitt, hj2schnitt, end]
+        print str(hj1)+" "+str(hj1anz)+" "+str(hj2)+" "+str(schriftl)
+        return schriftl
+
     def leistung(self, teilnahmen, hjwechsel, kurs):
         '''Ermittelt die Gesamt(durchschnitts)leistungen in einem Kurs'''
         '''Rückgabe: [fach1, mita1, anw1, ue1, ha1, fach2,...]'''

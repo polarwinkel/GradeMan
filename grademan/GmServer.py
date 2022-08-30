@@ -23,6 +23,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 '''
 
 import os, datetime, random, threading, webbrowser, csv, zipfile
+import markdown
 from operator import attrgetter
 
 from bottle import template, route, run, request, response, static_file, abort, redirect
@@ -110,8 +111,8 @@ class GmServer(threading.Thread):
         if bild: # (neues) Bild speichern (TODO: nur bis bottle 0.11 !)
             open('%spictures/%s.jpg' % (self.gmdir, num), 'wb').write(bild.file.read())
         self.db.save()
-        redirect('/schueler/all')
-    
+        redirect('/schueler/%s' % num)
+
     def schuelerview(self, num):
         '''gibt einen Schüler zum betrachten zurück'''
         if num == 'new':
@@ -139,11 +140,13 @@ class GmServer(threading.Thread):
         bemerkung = request.forms.get('bemerkung')
         csvfile = request.files.get('csvfile')
         picfile = request.files.get('picfile')
+        gewichtSchriftl = request.forms.get('gewichtSchriftl')
         if self.db.kurs_in_db(num):
             kur = self.db.kurs_in_db(num, True)
             kur.name = name
             kur.fach = fach
             kur.bemerkung = bemerkung
+            kur.gewichtSchriftl = gewichtSchriftl
         else:
             oberstufe = bool(request.forms.get('oberstufe'))
             kur = Kurs(num, name, fach, oberstufe, bemerkung)
@@ -261,12 +264,14 @@ class GmServer(threading.Thread):
                         pass
                     teile.append(teil)
             leistung = []
+            schriftl = []
             for sch in kur.schueler:
                 leistung.append(sch.leistung(teile, self.halbjahreswechsel, kur))
+                schriftl.append(sch.schriftl(teile, self.halbjahreswechsel, kur))
             # nur Teilnahmen des Kurses, damit die Berechnungen schneller sinc:
-            return template('kurs_leistung', num = num, kur = kur, 
-                    stunden = stunden, teilntabelle = teilntabelle, 
-                    leistung = leistung)
+            return template('kurs_leistung', num = num, kur = kur,
+                    stunden = stunden, teilntabelle = teilntabelle,
+                    leistung = leistung, schriftl = schriftl)
         abort(404, 'Kurs nicht gefunden! (evtl. gelöscht)')
     
     def addschueler(self, num, schname = None):
@@ -556,9 +561,27 @@ class GmServer(threading.Thread):
             if (teil.stunde.kurs == kurs) and (teil.schueler == schueler) and (teil.deleted == False):
                 teile.append(teil)
         leistung = schueler.leistung(teile, self.halbjahreswechsel, kurs)
-        return template('kursschueler', teile = teile, schueler = schueler, 
-            kurs = kurs, nsch = nsch, leistung = leistung)
-    
+        schriftl = schueler.schriftl(teile, self.halbjahreswechsel, kurs)
+        return template('kursschueler', teile = teile, schueler = schueler,
+            kurs = kurs, nsch = nsch, leistung = leistung, schriftl = schriftl)
+
+    def kursschuelerchange(self):
+        '''Ändern von Schülerdetails in einem Kurs'''
+        tnum = request.forms.get('tnum')
+        schueler = request.forms.get('schueler')
+        try:
+            teilnahme = teilnahme = self.db.teilnahme_in_db(tnum, True)
+        except KeyError:
+            abort(404, 'Teilnahme nicht gefunden')
+        teilnahme.anwesenheit = bool(request.forms.get('anwesend'))
+        teilnahme.entschuldigt = bool(request.forms.get('entschuldigt'))
+        teilnahme.hausaufgabe = bool(request.forms.get('hausaufgabe'))
+        teilnahme.mitarbeit = request.forms.get('mitarbeit')
+        teilnahme.fachlich = request.forms.get('fachlich')
+        teilnahme.bemerkung = request.forms.get('bemerkung')
+        self.db.save()
+        return self.kursschueler(str(teilnahme.stunde.kurs.num),schueler)
+
     def lernnamen(self, kurs):
         '''Namen lernen, nach Kurs sortiert oder alle'''
         if kurs == 'list':
@@ -679,7 +702,7 @@ class GmServer(threading.Thread):
     
     def run(self):
         try:
-            run(host='localhost', port=self.port)
+            run(host='0.0.0.0', port=self.port)
         except IOError:
             print("ERROR STARTING SERVER: Port probably in use. Maybe GradeMan is already running. I didn't start GradeMan (again).")
     

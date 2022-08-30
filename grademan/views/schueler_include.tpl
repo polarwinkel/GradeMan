@@ -1,5 +1,5 @@
 %rebase base
-<h1>Kurs <a href="/kurs/{{kur}}">{{kur.bez()}}</a> füllen</h1>
+<h1>Kurs <a href="/kurs/{{kur}}">{{kur.bez}}</a> füllen</h1>
 Schüler durch Anklicken dem Kurs hinzufügen:<br>
 %for sch in schueler:
     %if (sch not in kur.schueler) and (sch.deleted==False):

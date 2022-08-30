@@ -25,7 +25,12 @@
     %if lstu != '-':
         <br>
         Letzte Stunde <a href="/kurs/{{lstu.kurs}}">{{lstu.kurs.bez()}}</a>: <a href="/stunde/{{lstu}}">{{lstu.thema if lstu!='' else ''}}</a> (zum <a href="/kurscurriculum/{{stu.kurs.num}}">Curriculum</a>)<br>
-        <textarea type="text" cols="65" rows="6" readonly="yes">{{lstu.bemerkung if lstu!='' else ''}}</textarea><br>
+        <!-- <textarea type="text" cols="65" rows="6" readonly="yes">{{lstu.bemerkung if lstu!='' else ''}}</textarea><br> -->
+        <div style="text-align:left; margin: 0em 2em 2em 2em; border:1px solid black; padding:0em 1em 1em 1em; background-color: lightgrey;">
+	%import markdown
+	%html = markdown.markdown(lstu.bemerkung.decode('utf_8'), ['asciimathml'])
+	<div style="text-align:justify; font-size:small">{{!html}}</div>
+	</div>
     %end
 %end
 </form>
