@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # !! Linux-Startdatei !!
@@ -28,8 +28,8 @@ import os, sys
 os.chdir('/usr/share/grademan')
 sys.path.append('/usr/share/grademan')
 import webbrowser, shutil
-from Tkinter import *
-from ttk import *
+from tkinter import *
+from tkinter import ttk
 from GmHandler import GmHandler
 from ConfigParser import ConfigParser
 

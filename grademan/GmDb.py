@@ -21,7 +21,7 @@ Copyright 2011-2013 Dirk & Jannik Winkel
     <http://www.gnu.org/licenses/>.
 '''
 
-import cPickle as pickle
+import pickle as pickle
 import os
 
 from Schueler import Schueler

@@ -90,3 +90,4 @@ ENV/
 
 # manual
 grademan/mlo.diff
+*.bak

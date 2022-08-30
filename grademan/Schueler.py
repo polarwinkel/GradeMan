@@ -96,7 +96,7 @@ class Schueler(object):
         except:
             end = '-'
         schriftl = [hj1schnitt, hj2schnitt, end]
-        print str(hj1)+" "+str(hj1anz)+" "+str(hj2)+" "+str(schriftl)
+        print(str(hj1)+" "+str(hj1anz)+" "+str(hj2)+" "+str(schriftl))
         return schriftl
 
     def leistung(self, teilnahmen, hjwechsel, kurs):

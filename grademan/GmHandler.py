@@ -22,7 +22,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
     <http://www.gnu.org/licenses/>.
 '''
 
-import thread
+import _thread
 from bottle import route
 from GmServer import GmServer
 import markdown

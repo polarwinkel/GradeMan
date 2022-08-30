@@ -25,10 +25,10 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 '''
 
 import os, webbrowser
-from Tkinter import *
-from ttk import *
+from tkinter import *
+from tkinter import ttk
 from GmHandler import GmHandler
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import markdown
 
 # Für cxfreeze:

@@ -13,7 +13,7 @@ Copyright (c) 2012, Marcel Hellkamp.
 License: MIT (see LICENSE for details)
 """
 
-from __future__ import with_statement
+
 
 __author__ = 'Marcel Hellkamp'
 __version__ = '0.11.6.GradeMan'
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         import gevent.monkey; gevent.monkey.patch_all()
 
 import base64, cgi, email.utils, functools, hmac, imp, itertools, mimetypes,\
-        os, re, subprocess, sys, tempfile, threading, time, urllib, warnings
+        os, re, subprocess, sys, tempfile, threading, time, urllib.request, urllib.parse, urllib.error, warnings
 
 from datetime import date as datedate, datetime, timedelta
 from tempfile import TemporaryFile
@@ -84,25 +84,25 @@ if py3k:
     from collections import MutableMapping as DictMixin
     import pickle
     from io import BytesIO
-    basestring = str
-    unicode = str
+    str = str
+    str = str
     json_loads = lambda s: json_lds(touni(s))
     callable = lambda x: hasattr(x, '__call__')
     imap = map
 else: # 2.x
-    import httplib
-    import thread
-    from urlparse import urljoin, SplitResult as UrlSplitResult
-    from urllib import urlencode, quote as urlquote, unquote as urlunquote
-    from Cookie import SimpleCookie
-    from itertools import imap
-    import cPickle as pickle
-    from StringIO import StringIO as BytesIO
+    import http.client
+    import _thread
+    from urllib.parse import urljoin, SplitResult as UrlSplitResult
+    from urllib.parse import urlencode, quote as urlquote, unquote as urlunquote
+    from http.cookies import SimpleCookie
+    
+    import pickle as pickle
+    from io import StringIO as BytesIO
     if py25:
         msg = "Python 2.5 support may be dropped in future versions of Bottle."
         warnings.warn(msg, DeprecationWarning)
         from UserDict import DictMixin
-        def next(it): return it.next()
+        def next(it): return next(it)
         bytes = str
     else: # 2.6, 2.7
         from collections import MutableMapping as DictMixin
@@ -112,10 +112,10 @@ from markdown import markdown
 
 # Some helpers for string/byte handling
 def tob(s, enc='utf8'):
-    return s.encode(enc) if isinstance(s, unicode) else bytes(s)
+    return s.encode(enc) if isinstance(s, str) else bytes(s)
 def touni(s, enc='utf8', err='strict'):
     try:
-        return s.decode(enc,err) if isinstance(s, bytes) else unicode(s)
+        return s.decode(enc,err) if isinstance(s, bytes) else str(s)
     except UnicodeDecodeError:
         return "*** Trying to decode yields an Error - please edit! ***"
 tonat = touni if py3k else tob
@@ -130,7 +130,7 @@ if py31:
 # File uploads (which are implemented as empty FiledStorage instances...)
 # have a negative truth value. That makes no sense, here is a fix.
 class FieldStorage(cgi.FieldStorage):
-    def __nonzero__(self): return bool(self.list or self.file)
+    def __bool__(self): return bool(self.list or self.file)
     if py3k: __bool__ = __nonzero__
 
 # A bug in functools causes it to break if the wrapper is an instance method
@@ -555,7 +555,7 @@ class Bottle(object):
 
             All other parameters are passed to the underlying :meth:`route` call.
         '''
-        if isinstance(app, basestring):
+        if isinstance(app, str):
             prefix, app = app, prefix
             depr('Parameter order of Bottle.mount() changed.') # 0.10
 
@@ -697,7 +697,7 @@ class Bottle(object):
         skiplist = makelist(skip)
         def decorator(callback):
             # TODO: Documentation and tests
-            if isinstance(callback, basestring): callback = load(callback)
+            if isinstance(callback, str): callback = load(callback)
             for rule in makelist(path) or yieldroutes(callback):
                 for verb in makelist(method):
                     verb = verb.upper()
@@ -794,10 +794,10 @@ class Bottle(object):
             return []
         # Join lists of byte or unicode strings. Mixed lists are NOT supported
         if isinstance(out, (tuple, list))\
-        and isinstance(out[0], (bytes, unicode)):
+        and isinstance(out[0], (bytes, str)):
             out = out[0][0:0].join(out) # b'abc'[0:0] -> b''
         # Encode unicode strings
-        if isinstance(out, unicode):
+        if isinstance(out, str):
             out = out.encode(response.charset)
         # Byte Strings are just returned
         if isinstance(out, bytes):
@@ -842,8 +842,8 @@ class Bottle(object):
             return self._cast(first)
         if isinstance(first, bytes):
             return itertools.chain([first], out)
-        if isinstance(first, unicode):
-            return imap(lambda x: x.encode(response.charset),
+        if isinstance(first, str):
+            return map(lambda x: x.encode(response.charset),
                                   itertools.chain([first], out))
         return self._cast(HTTPError(500, 'Unsupported response type: %s'\
                                          % type(first)))
@@ -1210,7 +1210,7 @@ class BaseRequest(object):
     def __delitem__(self, key): self[key] = ""; del(self.environ[key])
     def __iter__(self): return iter(self.environ)
     def __len__(self): return len(self.environ)
-    def keys(self): return self.environ.keys()
+    def keys(self): return list(self.environ.keys())
     def __setitem__(self, key, value):
         """ Change an environ value and clear all caches that depend on it. """
 
@@ -1295,14 +1295,14 @@ class BaseResponse(object):
         self.body = body
         self.status = status or self.default_status
         if headers:
-            for name, value in headers.items():
+            for name, value in list(headers.items()):
                 self[name] = value
 
     def copy(self):
         ''' Returns a copy of self. '''
         copy = Response()
         copy.status = self.status
-        copy._headers = dict((k, v[:]) for (k, v) in self._headers.items())
+        copy._headers = dict((k, v[:]) for (k, v) in list(self._headers.items()))
         return copy
 
     def __iter__(self):
@@ -1393,7 +1393,7 @@ class BaseResponse(object):
             headers = [h for h in headers if h[0] not in bad_headers]
         out += [(name, val) for name, vals in headers for val in vals]
         if self._cookies:
-            for c in self._cookies.values():
+            for c in list(self._cookies.values()):
                 out.append(('Set-Cookie', c.OutputString()))
         return out
 
@@ -1454,13 +1454,13 @@ class BaseResponse(object):
 
         if secret:
             value = touni(cookie_encode((name, value), secret))
-        elif not isinstance(value, basestring):
+        elif not isinstance(value, str):
             raise TypeError('Secret key missing for non-string Cookie.')
 
         if len(value) > 4096: raise ValueError('Cookie value to long.')
         self._cookies[name] = value
 
-        for key, value in options.items():
+        for key, value in list(options.items()):
             if key == 'max_age':
                 if isinstance(value, timedelta):
                     value = value.seconds + value.days * 24 * 3600
@@ -1698,7 +1698,7 @@ class MultiDict(DictMixin):
     """
 
     def __init__(self, *a, **k):
-        self.dict = dict((k, [v]) for (k, v) in dict(*a, **k).items())
+        self.dict = dict((k, [v]) for (k, v) in list(dict(*a, **k).items()))
 
     def __len__(self): return len(self.dict)
     def __iter__(self): return iter(self.dict)
@@ -1706,29 +1706,29 @@ class MultiDict(DictMixin):
     def __delitem__(self, key): del self.dict[key]
     def __getitem__(self, key): return self.dict[key][-1]
     def __setitem__(self, key, value): self.append(key, value)
-    def keys(self): return self.dict.keys()
+    def keys(self): return list(self.dict.keys())
 
     if py3k:
-        def values(self): return (v[-1] for v in self.dict.values())
-        def items(self): return ((k, v[-1]) for k, v in self.dict.items())
+        def values(self): return (v[-1] for v in list(self.dict.values()))
+        def items(self): return ((k, v[-1]) for k, v in list(self.dict.items()))
         def allitems(self):
-            return ((k, v) for k, vl in self.dict.items() for v in vl)
+            return ((k, v) for k, vl in list(self.dict.items()) for v in vl)
         iterkeys = keys
         itervalues = values
         iteritems = items
         iterallitems = allitems
 
     else:
-        def values(self): return [v[-1] for v in self.dict.values()]
-        def items(self): return [(k, v[-1]) for k, v in self.dict.items()]
-        def iterkeys(self): return self.dict.iterkeys()
-        def itervalues(self): return (v[-1] for v in self.dict.itervalues())
+        def values(self): return [v[-1] for v in list(self.dict.values())]
+        def items(self): return [(k, v[-1]) for k, v in list(self.dict.items())]
+        def iterkeys(self): return iter(self.dict.keys())
+        def itervalues(self): return (v[-1] for v in self.dict.values())
         def iteritems(self):
-            return ((k, v[-1]) for k, v in self.dict.iteritems())
+            return ((k, v[-1]) for k, v in self.dict.items())
         def iterallitems(self):
-            return ((k, v) for k, vl in self.dict.iteritems() for v in vl)
+            return ((k, v) for k, vl in self.dict.items() for v in vl)
         def allitems(self):
-            return [(k, v) for k, vl in self.dict.iteritems() for v in vl]
+            return [(k, v) for k, vl in self.dict.items() for v in vl]
 
     def get(self, key, default=None, index=-1, type=None):
         ''' Return the most recent value for a key.
@@ -1780,7 +1780,7 @@ class FormsDict(MultiDict):
     recode_unicode = True
 
     def _fix(self, s, encoding=None):
-        if isinstance(s, unicode) and self.recode_unicode: # Python 3 WSGI
+        if isinstance(s, str) and self.recode_unicode: # Python 3 WSGI
             s = s.encode('latin1')
         if isinstance(s, bytes): # Python 2 WSGI
             return s.decode(encoding or self.input_encoding)
@@ -1803,7 +1803,7 @@ class FormsDict(MultiDict):
         except (UnicodeError, KeyError):
             return default
 
-    def __getattr__(self, name, default=unicode()):
+    def __getattr__(self, name, default=str()):
         # Without this guard, pickle generates a cryptic TypeError:
         if name.startswith('__') and name.endswith('__'):
             return super(FormsDict, self).__getattr__(name)
@@ -1879,7 +1879,7 @@ class WSGIHeaderDict(DictMixin):
                 yield key.replace('_', '-').title()
 
     def keys(self): return [x for x in self]
-    def __len__(self): return len(self.keys())
+    def __len__(self): return len(list(self.keys()))
     def __contains__(self, key): return self._ekey(key) in self.environ
 
 
@@ -1912,7 +1912,7 @@ class ConfigDict(dict):
         if key in self: del self[key]
 
     def __call__(self, *a, **ka):
-        for key, value in dict(*a, **ka).items(): setattr(self, key, value)
+        for key, value in list(dict(*a, **ka).items()): setattr(self, key, value)
         return self
 
 
@@ -2290,7 +2290,7 @@ def validate(**vkargs):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kargs):
-            for key, value in vkargs.items():
+            for key, value in list(vkargs.items()):
                 if key not in kargs:
                     abort(403, 'Missing parameter: %s' % key)
                 try:
@@ -2360,7 +2360,7 @@ class ServerAdapter(object):
         pass
 
     def __repr__(self):
-        args = ', '.join(['%s=%s'%(k,repr(v)) for k, v in self.options.items()])
+        args = ', '.join(['%s=%s'%(k,repr(v)) for k, v in list(self.options.items())])
         return "%s(%s)" % (self.__class__.__name__, args)
 
 
@@ -2675,7 +2675,7 @@ def run(app=None, server='wsgiref', host='127.0.0.1', port=8080,
     try:
         _debug(debug)
         app = app or default_app()
-        if isinstance(app, basestring):
+        if isinstance(app, str):
             app = load_app(app)
         if not callable(app):
             raise ValueError("Application is not callable: %r" % app)
@@ -2685,7 +2685,7 @@ def run(app=None, server='wsgiref', host='127.0.0.1', port=8080,
 
         if server in server_names:
             server = server_names.get(server)
-        if isinstance(server, basestring):
+        if isinstance(server, str):
             server = load(server)
         if isinstance(server, type):
             server = server(host=host, port=port, **kargs)
@@ -2744,11 +2744,11 @@ class FileCheckerThread(threading.Thread):
             if not exists(self.lockfile)\
             or mtime(self.lockfile) < time.time() - self.interval - 5:
                 self.status = 'error'
-                thread.interrupt_main()
+                _thread.interrupt_main()
             for path, lmtime in list(files.items()):
                 if not exists(path) or mtime(path) > lmtime:
                     self.status = 'reload'
-                    thread.interrupt_main()
+                    _thread.interrupt_main()
                     break
             time.sleep(self.interval)
 
@@ -2935,9 +2935,9 @@ class SimpleTALTemplate(BaseTemplate):
         from simpletal import simpleTALES
         for dictarg in args: kwargs.update(dictarg)
         context = simpleTALES.Context()
-        for k,v in self.defaults.items():
+        for k,v in list(self.defaults.items()):
             context.addGlobal(k, v)
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             context.addGlobal(k, v)
         output = StringIO()
         self.tpl.expand(context, output)
@@ -3171,13 +3171,13 @@ DEBUG = False
 NORUN = False # If set, run() does nothing. Used by load_app()
 
 #: A dict to map HTTP status codes (e.g. 404) to phrases (e.g. 'Not Found')
-HTTP_CODES = httplib.responses
+HTTP_CODES = http.client.responses
 HTTP_CODES[418] = "I'm a teapot" # RFC 2324
 HTTP_CODES[428] = "Precondition Required"
 HTTP_CODES[429] = "Too Many Requests"
 HTTP_CODES[431] = "Request Header Fields Too Large"
 HTTP_CODES[511] = "Network Authentication Required"
-_HTTP_STATUS_LINES = dict((k, '%d %s'%(k,v)) for (k,v) in HTTP_CODES.items())
+_HTTP_STATUS_LINES = dict((k, '%d %s'%(k,v)) for (k,v) in list(HTTP_CODES.items()))
 
 #: The default template used for error pages. Override with @error()
 ERROR_PAGE_TEMPLATE = """
