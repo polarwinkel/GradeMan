@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 *-*
 
 '''
 GradeMan
-Copyright 2011-2012 Dirk Winkel
+Copyright 2011-2022 Dirk Winkel
 
     This file is part of GradeMan.
 

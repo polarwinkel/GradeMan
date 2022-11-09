@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 *-*
 
 '''
 GradeMan
-Copyright 2011-2014 Dirk & Jannik Winkel
+Copyright 2011-2022 Dirk & Jannik Winkel, Martin Lorenz
 
     This file is part of GradeMan.
 
@@ -22,7 +22,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
     <http://www.gnu.org/licenses/>.
 '''
 
-import thread
+import _thread
 from bottle import route
 from GmServer import GmServer
 
