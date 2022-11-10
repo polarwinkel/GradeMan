@@ -18,7 +18,7 @@
         %include
     </div>
     <div class="foot">
-        <a href="#top">Top</a> | <a href="/help">Offline-Hilfe</a> | <a href="http://polarwinkel.de/index.php?id=76">Online-Info</a>
+        <a href="#top">Top</a> | <a href="/help">Offline-Hilfe</a> | <a href="https://polarwinkel.de/grademan.html">Online-Info</a>
     </div>
 </div>
 </center>

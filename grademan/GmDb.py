@@ -45,7 +45,7 @@ class GmDb:
         # Datenbank laden oder, falls nicht vorhanden, erstellen
         try:
             db = open(self.dbFile, 'rb')
-            self.data = pickle.load(db)
+            self.data = pickle.load(db, encoding='latin1') # encoding for compatibility with python2-versions
             bak = open(bakFile, 'wb')
             pickle.dump(self.data, bak, 2)
             bak.close()
