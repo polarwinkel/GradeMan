@@ -2,7 +2,7 @@
 
 # Script um GradeMan-deb-file zu bauen
 # Bitte passende Version eintragen:
-version="dev"
+version="3.3.3"
 
 echo "=== baue "GradeMan" version "$version" ==="
 

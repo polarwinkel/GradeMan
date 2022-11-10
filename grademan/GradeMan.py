@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # !! Windows-Startdatei !!
 
 '''
 GradeMan
-Copyright 2011-2014 Dirk & Jannik Winkel
+Copyright 2011-2022 Dirk & Jannik Winkel, Martin Lorenz
 
     This file is part of GradeMan.
 
@@ -37,11 +37,11 @@ from encodings import hex_codec
 from encodings import utf_8
 
 __author__ = 'Dirk Winkel'
-__version__ = '3.2'
+__version__ = '3.3.3'
 __license__ = 'LGPL'
 gmdir = ''
 config = ConfigParser()
-config.read('GradeMan.ini')
+config.read('GradeMan.conf')
 port = config.get('server', 'port')
 home = 'http://localhost:%s/' % port
 
@@ -50,7 +50,7 @@ home = 'http://localhost:%s/' % port
 #os.chdir(path)
 
 # Grademan-Server mittels Handler starten
-handler = GmHandler(config)
+handler = GmHandler(config, gmdir)
 
 # Buttonaktion: Browser auf GradeMan-Seite öffnen
 def open_browser():

@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 '''
-Copyright 2011-2013 Dirk & Jannik Winkel
+Copyright 2011-2022 Dirk & Jannik Winkel, Martin Lorenz
 
     This file is part of GradeMan.
 
@@ -45,7 +45,7 @@ class GmDb:
         # Datenbank laden oder, falls nicht vorhanden, erstellen
         try:
             db = open(self.dbFile, 'rb')
-            self.data = pickle.load(db)
+            self.data = pickle.load(db, encoding='latin1') # encoding for compatibility with python2-versions
             bak = open(bakFile, 'wb')
             pickle.dump(self.data, bak, 2)
             bak.close()
