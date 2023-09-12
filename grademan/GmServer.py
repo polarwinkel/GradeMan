@@ -27,13 +27,14 @@ from operator import attrgetter
 
 from bottle import template, route, run, request, response, static_file, abort, redirect
 #from bottle import debug, FlupFCGIServer
+import codecs
+import locale
 
 from GmDb import GmDb
 from Schueler import Schueler
 from Stunde import Stunde
 from Kurs import Kurs
 from Teilnahme import Teilnahme
-import locale
 
 class GmServer(threading.Thread):
     '''lokaler Webserver für GradeMan'''
@@ -149,8 +150,8 @@ class GmServer(threading.Thread):
             kur = Kurs(num, name, fach, oberstufe, bemerkung)
             self.data['kurse'].append(kur)
             self.data['kurse'].sort(key=attrgetter('name'))
-        if csvfile: # TODO: nur bis bottle 0.11 !
-            schliste = csv.reader(csvfile.file, delimiter=',', skipinitialspace=True, strict=True)
+        if csvfile.file.getbuffer().nbytes > 0:
+            schliste = csv.reader(codecs.iterdecode((csvfile.file), 'utf-8'), delimiter=',', skipinitialspace=True, strict=True)
             for row in schliste:
                 if (row[2] != 'm') & (row[2] != 'w'):
                     abort(415, 'Fehler in der csv-Datei in der Geschlecht-Spalte, siehe die Hilfe für die Anforderungen!\nKeine Änderungen vorgenommen.')
@@ -169,9 +170,10 @@ class GmServer(threading.Thread):
                 if sch not in kur.schueler:
                     kur.addschuler(sch)
             locale.setlocale(locale.LC_ALL, "") # für Umlaute nötig
-            kur.schueler.sort(key=attrgetter('vorname'), cmp=locale.strcoll)
-            kur.schueler.sort(key=attrgetter('nachname'), cmp=locale.strcoll)
-        if picfile: # TODO: nur bis bottle 0.11 !
+            kur.schueler.sort(key=attrgetter('vorname'))
+            kur.schueler.sort(key=attrgetter('nachname'))
+        if picfile.file.getbuffer().nbytes > 0:
+            print(picfile.file)
             piczip = zipfile.ZipFile(picfile.file)
             n = 0
             for sch in kur.schueler:
@@ -276,8 +278,8 @@ class GmServer(threading.Thread):
             sch = self.db.schueler_in_db(schname, True)
             kur.addschuler(sch)
             locale.setlocale(locale.LC_ALL, "") # für Umlaute nötig
-            kur.schueler.sort(key=attrgetter('vorname'), cmp=locale.strcoll)
-            kur.schueler.sort(key=attrgetter('nachname'), cmp=locale.strcoll)
+            kur.schueler.sort(key=attrgetter('vorname'))
+            kur.schueler.sort(key=attrgetter('nachname'))
             self.db.save()
         return template('schueler_include', num = num, kur = kur, schueler = self.data['schueler'])
     
@@ -448,8 +450,8 @@ class GmServer(threading.Thread):
                     i+=1
             # Teilnahmen rückwärts nach Datum und nach normal nach Name (2. Option) sortieren
             locale.setlocale(locale.LC_ALL, "") # für Umlaute nötig
-            self.data['teilnahmen'].sort(key=attrgetter('schueler.vorname'), cmp=locale.strcoll)
-            self.data['teilnahmen'].sort(key=attrgetter('schueler.nachname'), cmp=locale.strcoll)
+            self.data['teilnahmen'].sort(key=attrgetter('schueler.vorname'))
+            self.data['teilnahmen'].sort(key=attrgetter('schueler.nachname'))
             self.data['teilnahmen'].sort(key=attrgetter('stunde.datum', 'stunde'), reverse=True)
         self.db.save()
         redirect('/stunde/%s' % str(stu) )
@@ -642,8 +644,8 @@ class GmServer(threading.Thread):
             sch = self.db.schueler_in_db(schnum, True)
             kur.addschuler(sch)
             locale.setlocale(locale.LC_ALL, "") # für Umlaute nötig
-            kur.schueler.sort(key=attrgetter('vorname'), cmp=locale.strcoll)
-            kur.schueler.sort(key=attrgetter('nachname'), cmp=locale.strcoll)
+            kur.schueler.sort(key=attrgetter('vorname'))
+            kur.schueler.sort(key=attrgetter('nachname'))
             self.db.save()
             redirect('/delete/kursschueler/%s' % str(kur))
         return template('kursschueler_delete', kur = kur, schueler = self.data['schueler'])
