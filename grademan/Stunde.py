@@ -59,6 +59,70 @@ class Stunde(object):
     def bez(self):
         '''Gibt einen (nicht eindeutigen) Bezeichner für die Stunde an'''
         return '%s %s' % (self.kurs.bez(), self.datum)
-    
+
+    # Hilfsfunktion zur Übersetzung von Noten in Mitarbeitsmarker
+    def trma(self,wert):
+        try:
+            note = int(wert)
+        except ValueError:
+            note = wert
+        #print note, type(note), wert, type(wert)
+        if (self.get_num_faktor() > 0):
+            nmtab = {}
+            mntab = {}
+            if self.kurs.oberstufe:
+                nmtab = {
+                    0: '---',
+                    1: '--',
+                    2: '--',
+                    3: '--',
+                    4: '-',
+                    5: '-',
+                    6: '-',
+                    7: '*',
+                    8: '*',
+                    9: '*',
+                    10: '+',
+                    11: '+',
+                    12: '+',
+                    13: '++',
+                    14: '++',
+                    15: '+++'
+                }
+                mntab = {
+                    '---': 0,
+                    '--': 3,
+                    '-': 6,
+                    '*': 9,
+                    '+': 11,
+                    '++': 14,
+                    '+++': 15
+                }
+            else:
+                nmtab = {
+                    6: '---',
+                    5: '--',
+                    4: '-',
+                    3: '*',
+                    2: '+',
+                    1: '++'
+                }
+                mntab = {
+                    '---': 6,
+                    '--': 5,
+                    '-': 4,
+                    '*': 3,
+                    '+': 2,
+                    '++': 1
+                }
+            if (type(note)==type(0)):
+                #print "returning "+nmtab.get(note, "!X!")
+                return nmtab.get(note, "!X!")
+            else:
+                #print "returning "+str(mntab.get(note, "-"))
+                return str(mntab.get(note,'-'))
+        else:
+            return(str(note))
+
     def __str__(self):
         return str(self.num)

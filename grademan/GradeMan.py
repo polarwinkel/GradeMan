@@ -29,6 +29,7 @@ from tkinter import *
 from tkinter.ttk import *
 from GmHandler import GmHandler
 from configparser import ConfigParser
+import markdown
 
 # Für cxfreeze:
 from encodings import aliases

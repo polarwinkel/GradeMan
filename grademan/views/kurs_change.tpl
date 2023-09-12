@@ -16,18 +16,28 @@ Neue Stunde: <a href="/stunde/new/{{kur}}">Heute</a> | <a href="/stunde/new/{{ku
   <textarea name="bemerkung" type="text" cols="65" rows="6">{{kur.bemerkung}}</textarea><br>
   <br>
   <input type="submit" value=" Speichern ">
+  Gewicht der schriftlichen Leistung: <input name="gewichtSchriftl" type="number" min=0 max=1 step=0.1 value={{kur.gewS()}}>
 </form>
 <br><br><br>
 Stunden des Kurses:<br>
+<table>
+    <tr><th>Datum</th><th>Faktor</th><th>Thema</th></tr>
 %for i in range(len(stunden)):
+    <tr>
     %if (stunden[i].kurs == kur) and (stunden[i].deleted==False):
+        <td><a href="../stunde/{{stunden[i]}}">{{stunden[i].datum}}</a></td>
+        <td>{{stunden[i].faktor}}</td>
+        <td>
         %if stunden[i].faktor == '0':
-            <a href="../stunde/{{stunden[i]}}" style="color:#a00;">{{stunden[i].datum}}: {{stunden[i].thema}}</a><br>
+            <a href="../stunde/{{stunden[i]}}" style="color:#a00;">{{stunden[i].thema}}</a><br>
         %else:
-            <a href="../stunde/{{stunden[i]}}">{{stunden[i].datum}}: {{stunden[i].thema}}</a><br>
-        %end
+            <a href="../stunde/{{stunden[i]}}">{{stunden[i].thema}}</a><br>
+        %end;
+        </td>
     %end
+    </tr>
 %end
+</table>
 <br />
 <hr />
 <br />

@@ -25,7 +25,7 @@ Copyright 2011-2014 Dirk & Jannik Winkel
 
 import os, webbrowser
 from GmHandler import GmHandler
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 # Bei Aufruf ueber Symlink ins Arbeitsverzeichnis wechseln
 path = os.path.dirname(os.path.abspath(__file__))

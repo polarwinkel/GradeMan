@@ -24,7 +24,7 @@ Copyright 2011-2022 Dirk & Jannik Winkel
 
 class Kurs(object):
     '''Schulklasse in einem bestimmtem Fach'''
-    def __init__(self, num, name, fach, oberstufe = False, bemerkung = '', deleted=False, sitzplanBreite=0, sitzplanHoehe=0, sitzplanNachname=False):
+    def __init__(self, num, name, fach, oberstufe = False, bemerkung = '', deleted=False, sitzplanBreite=0, sitzplanHoehe=0, sitzplanNachname=False, gewichtSchriftl=0.5):
         self.num = num
         self.name = name
         self.fach = fach
@@ -36,7 +36,8 @@ class Kurs(object):
         self.sitzplanHoehe = sitzplanHoehe
         self.sitzplanNachname = sitzplanNachname
         self.sitzplan = [['']]
-    
+        self.gewichtSchriftl = gewichtSchriftl
+
     def addschuler(self, schueler):
         if schueler not in self.schueler:
             self.schueler.append(schueler)
@@ -54,6 +55,14 @@ class Kurs(object):
     
     def anzahl(self):
         return len(self.schueler)
-    
+
+    def gewS(self):
+        try:
+            r = float(self.gewichtSchriftl)
+        except:
+            return float(0.5)
+        else:
+            return r
+
     def __str__(self):
-        return str(self.num)
+        return str(self.num)#+":"+self.name+" "+self.fach

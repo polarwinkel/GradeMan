@@ -1,9 +1,9 @@
 %rebase base
-<h1>Leistungsübersicht der <a href="/kurs/{{kur.num}}">{{kur.bez()}}</a></h1>
+<h1>Leistungsübersicht <a href="/kurs/{{kur.num}}">{{kur.bez()}}</a></h1>
 
 <p>Zusammenfassung<br>
 (Durchschnittsleistungen, Gesamtfehlzeiten)</p>
-<table style="border:2px solid silver; background-color:#fff;" rules="all"><tr>
+<table style="border:2px solid silver; background-color:#fff;font-size:small;" rules="all"><tr>
 <td>Stunde<br>(Datum,Faktor)</td>
 %i=0
 %for sch in kur.schueler:
@@ -94,7 +94,7 @@
 
 <p>Notenübersicht<br>
 (Bedeutung: Fachlich/Mitarbeit)</p>
-<table style="border:2px solid silver; background-color:#fff;" rules="all"><tr>
+<table style="border:2px solid silver; background-color:#fff;font-size:small;" rules="all"><tr>
 <td>Stunde<br>(Datum,Faktor)</td>
 %i=0
 %for sch in kur.schueler:
@@ -130,7 +130,7 @@
 
 <p>Anwesenheitsübersicht<br>
 (Bedeutung: Anwesend/Entschuldigt/Hausaufgaben)</p>
-<table style="border:2px solid silver; background-color:#fff;" rules="all"><tr>
+<table style="border:2px solid silver; background-color:#fff;font-size:small;" rules="all"><tr>
 <td>Stunde<br>(Datum,Faktor)</td>
 %i=0
 %for sch in kur.schueler:
